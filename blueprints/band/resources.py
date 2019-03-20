@@ -104,7 +104,7 @@ class ViewAllBand(Resource):
             rows = [{'halaman': args['p']}]
             for row in qry.limit(args['rp']).offset(offset).all():
                 rows.append(marshal(row, Bands.band_profile_response))
-            return {'status':'success','data':rows}, 200, {'Content-Type': 'application/json'}
+            return {'status':'Success','data':rows}, 200, {'Content-Type': 'application/json'}
         else: 
             qry = Bands.query.filter_by(band_id=bandID).first()
             if qry is not None:
