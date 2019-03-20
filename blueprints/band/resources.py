@@ -101,10 +101,10 @@ class ViewAllBand(Resource):
                 if qry.first() is None:
                     return {'status': 'Not_Found','message':'Band tidak ditemukan'},404, { 'Content-Type': 'application/json' }
 
-            rows = [{'halaman': args['p']}]
+            rows = []
             for row in qry.limit(args['rp']).offset(offset).all():
                 rows.append(marshal(row, Bands.band_profile_response))
-            return {'status':'Success','bands':rows}, 200, {'Content-Type': 'application/json'}
+            return {'status':'Success', 'halaman': args['p'], 'bands':rows}, 200, {'Content-Type': 'application/json'}
         else: 
             qry = Bands.query.filter_by(band_id=bandID).first()
             if qry is not None:
