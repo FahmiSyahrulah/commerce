@@ -28,13 +28,13 @@ class BandResource(Resource):
 
         qry = Bands.query.filter_by(username = args['username']).first()
         if qry is not None:
-            return {'message': 'USERNAME_ALREADY_EXISTS'}
+            return {'status': 'Error', 'message': 'USERNAME_ALREADY_EXISTS'}
 
         new_band = Bands(None, args['username'], args['password'], args['bandName'], args['bandDesc'], args['bandMail'], args['bandAddress'], args['bandPhone'], args['bandPhoto'])
         db.session.add(new_band)
         db.session.commit()
 
-        return {"message": "SUCCESS"}, 200, {'Content-Type': 'application/json'}
+        return {"status": "Sucess", 'message': 'Register Berhasil', 'data': new_band }, 200, {'Content-Type': 'application/json'}
     
     # Fungsi band melihat profilnya
     @jwt_required
@@ -42,7 +42,7 @@ class BandResource(Resource):
         band = get_jwt_claims()
         qry = Bands.query.get(band['band_id'])
         result = marshal(qry, Bands.response_field)
-        return result, 200, {'Content-Type': 'application/json'}
+        return {'status': 'Success', 'data': result}, 200, {'Content-Type': 'application/json'}
     
     # fungsi untuk band mengedit profiilnya
     @jwt_required
@@ -70,7 +70,7 @@ class BandResource(Resource):
         qry.bandPhone = args['bandPhone']
         qry.bandPhoto = args['bandPhoto']
         db.session.commit()
-        return {'message': 'Data_Updated', 'data': marshal(qry, Bands.response_field)}, 200, {'Content-Type': 'application/json'}
+        return {'status':'Success', 'message': 'Data Terupdate', 'data': marshal(qry, Bands.response_field)}, 200, {'Content-Type': 'application/json'}
 
     #fungsi untuk band menghapus akunnya
     @jwt_required
@@ -80,7 +80,7 @@ class BandResource(Resource):
         
         db.session.delete(qry)
         db.session.commit()
-        return {'message': 'Data_Deleted'}, 200, {'Content-Type': 'application/json'}
+        return {'status': 'Success', 'message': 'Akun terhapus'}, 200, {'Content-Type': 'application/json'}
 
 api.add_resource(BandResource, '/band/profile')
 
@@ -99,18 +99,18 @@ class ViewAllBand(Resource):
             if args['band'] is not None:
                 qry = qry.filter(Bands.bandName.like("%"+args['band']+"%"))
                 if qry.first() is None:
-                    return {'status': 'Band_not_found','message':'item not found'},404, { 'Content-Type': 'application/json' }
+                    return {'status': 'Not_Found','message':'Band tidak ditemukan'},404, { 'Content-Type': 'application/json' }
 
             rows = [{'halaman': args['p']}]
             for row in qry.limit(args['rp']).offset(offset).all():
                 rows.append(marshal(row, Bands.band_profile_response))
-            return {'status':'Success','band':rows}, 200, {'Content-Type': 'application/json'}
+            return {'status':'Success','bands':rows}, 200, {'Content-Type': 'application/json'}
         else: 
             qry = Bands.query.filter_by(band_id=bandID).first()
             if qry is not None:
-                 return marshal(qry, Bands.band_profile_response), 200, {'Content-Type': 'application/json'}
+                 return {'status':'Success', 'band':marshal(qry, Bands.band_profile_response)}, 200, {'Content-Type': 'application/json'}
             else:
-                return {'status': 'NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
+                return {'status': 'Data Tidak Ditemukan'}, 404, {'Content-Type': 'application/json'}
         
 api.add_resource(ViewAllBand, '/public/bands', '/public/bands/<int:bandID>')
 
