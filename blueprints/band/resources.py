@@ -34,7 +34,7 @@ class BandResource(Resource):
         db.session.add(new_band)
         db.session.commit()
 
-        return {"status": "Sucess", 'message': 'Register Berhasil', 'data': new_band }, 200, {'Content-Type': 'application/json'}
+        return {"status": "Sucess", 'message': 'Register Berhasil' }, 200, {'Content-Type': 'application/json'}
     
     # Fungsi band melihat profilnya
     @jwt_required
