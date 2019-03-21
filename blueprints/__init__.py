@@ -12,6 +12,7 @@ from datetime import timedelta
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://fahmi:syahrulah@172.31.19.225:3306/ecommerce'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:alphatech@localhost/ecommerce'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['JWT_SECRET_KEY'] = 'DkbkNKNCOnONkPoooJBb'
