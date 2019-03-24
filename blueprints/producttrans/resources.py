@@ -37,5 +37,30 @@ class UserTransaction(Resource):
                 return {"message": "Produk tidak mencukupi"}, 200, {'Content-Type': 'application/json'}
         else :
             return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
-
+    
+    @jwt_required
+    def get(self):
+        user = get_jwt_claims()
+        qry = Transactionproduct.query.filter_by(user_id=user['user_id']).all()
+        if qry is not None:
+            rows = []
+            for row in qry:
+                temp = marshal(row, Transactionproduct.public_response_field)
+                rows.append(temp)
+            return {'status':'sucess', 'MerchTransaksi': rows}, 200, {'Content-Type': 'application/jason'}
+        return {'status': 'Not_found', 'message': 'Transaksi merchandise tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
 api.add_resource(UserTransaction, '/user/trans')
+
+class BandMerchs(Resource):
+    @jwt_required
+    def get(self):
+        band = get_jwt_claims()
+        qry = Transactionproduct.query.filter_by(band_id=band['band_id']).all()
+        if qry is not None:
+            rows = []
+            for row in qry:
+                temp = marshal(row, Transactionproduct.public_response_field)
+                rows.append(temp)
+            return {'status':'sucess', 'MerchTransaksi': rows}, 200, {'Content-Type': 'application/jason'}
+        return {'status': 'Not_found', 'message': 'Transaksi merchandise tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
+api.add_resource(BandMerchs, '/band/trans')

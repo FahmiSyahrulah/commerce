@@ -27,10 +27,11 @@ class BandMerch(Resource):
         args = parse.parse_args()
 
         new_merch = Merch(None, band['band_id'], band['bandName'], args['merch_name'], args['price'], args['kategori'], args['quantity'], args['merch_desc'], args['merch_photo'])
+        merch = marshal(new_merch, Merch.public_response_field)
         db.session.add(new_merch)
         db.session.commit()
 
-        return {"message": "SUCCESS"}, 200, {'Content-Type': 'application/json'}
+        return {"status": "Sucess", 'message': "Merchandise ditambahkan", 'merchandise':merch}, 200, {'Content-Type': 'application/json'}
     
     # fungsi band menampilkan mercahndisenya dan detail merchandise
     @jwt_required
@@ -46,11 +47,11 @@ class BandMerch(Resource):
         else:
             qry = Merch.query.filter_by(band_id=band['band_id']).filter_by(merch_id=merchID).first()
             if qry is not None:
-                return marshal(qry, Merch.response_field), 200, {'Content-Type': 'application/jason'}
+                return {'status':'Sucess', 'merchandise':marshal(qry, Merch.response_field)}, 200, {'Content-Type': 'application/jason'}
             else:
-                return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
+                return {'status': 'Not_found', 'message': 'merchandise tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
         
-        return rows, 200, {'Content-Type': 'application/jason'}
+        return {'status':'Sucess', 'merchandises': rows}, 200, {'Content-Type': 'application/jason'}
     
     #fungsi band mengedit merchandisenya
     @jwt_required
@@ -60,7 +61,7 @@ class BandMerch(Resource):
         qryMerch = Merch.query.filter_by(band_id=band['band_id']).filter_by(merch_id=merchID).first()
 
         if qryMerch is None:
-            return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
+            return {'status': 'Not_found', 'message': 'merchandise tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
 
         else:
             merch = marshal(qryMerch, Merch.response_field)
@@ -83,7 +84,7 @@ class BandMerch(Resource):
             qryMerch.merch_photo = args['merch_photo']
 
             db.session.commit()
-            return marshal(qryMerch, Merch.response_field), 200, {'Content-Type': 'application/json'}
+            return {'status':'success', 'message':'updated', 'merch': marshal(qryMerch, Merch.response_field)}, 200, {'Content-Type': 'application/json'}
 
     @jwt_required
     def delete(self, merchID):
@@ -94,9 +95,9 @@ class BandMerch(Resource):
         if qryMerch is not None:
             db.session.delete(qryMerch)
             db.session.commit()
-            return {'status': 'Data_Deleted'}, 200, {'Content-Type': 'application/json'}
+            return {'status': 'Data_Deleted', 'message': 'merchandise terhapus'}, 200, {'Content-Type': 'application/json'}
         else:
-            return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
+            return {'status': 'Not_found', 'message': 'merchandise tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
 
 api.add_resource(BandMerch, '/band/merch', '/band/merch/<int:merchID>')
 
@@ -122,16 +123,16 @@ class PublicMerch(Resource):
                         if qry.first() is None:
                             return {'status': 'Not_found','message':'merchandise not found'},404, { 'Content-Type': 'application/json' }
             
-            rows = [{'halaman': args['p']}]
+            rows = []
             for row in qry.limit(args['rp']).offset(offset).all():
                 rows.append(marshal(row, Merch.public_response_field))
-            return rows, 200, {'Content-Type': 'application/json'}
+            return {'status': 'success', 'halaman': args['p'], 'merchandises':rows}, 200, {'Content-Type': 'application/json'}
 
         else:
             qry = Merch.query.get(merchID)
             if qry is not None:
-                return marshal(qry, Merch.public_response_field), 200, {'Content-Type': 'application/json'}
+                return {'status': 'success','merchandise':marshal(qry, Merch.public_response_field)}, 200, {'Content-Type': 'application/json'}
             else:
-                return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
+                return {'status': 'Not_found', 'message': 'merchandise tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
 
 api.add_resource(PublicMerch, '/public/merch', '/public/merch/<int:merchID>')

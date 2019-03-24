@@ -31,7 +31,7 @@ class UserResource(Resource):
         db.session.add(new_user)
         db.session.commit()
 
-        return {"message": "SUCCESS"}, 200, {'Content-Type': 'application/json'}
+        return {"status":"success", 'profile':marshal(new_user, Users.response_field) }, 200, {'Content-Type': 'application/json'}
     
     # Fungsi user melihat profilnya
     @jwt_required
@@ -39,7 +39,7 @@ class UserResource(Resource):
         user = get_jwt_claims()
         qry = Users.query.get(user['user_id'])
         result = marshal(qry, Users.response_field)
-        return result, 200, {'Content-Type': 'application/json'}
+        return {'status': 'success', 'data': result}, 200, {'Content-Type': 'application/json'}
     
     # fungsi untuk user mengedit profiilnya
     @jwt_required
@@ -61,7 +61,7 @@ class UserResource(Resource):
         qry.address = args['address']
         qry.phone = args['phone']
         db.session.commit()
-        return {'message': 'Data_Updated', 'data': marshal(qry, Users.response_field)}, 200, {'Content-Type': 'application/json'}
+        return {'status':'success', 'message': 'profile_updated', 'profile': marshal(qry, Users.response_field)}, 200, {'Content-Type': 'application/json'}
 
     #fungsi untuk user menghapus akunnya
     @jwt_required
@@ -71,7 +71,7 @@ class UserResource(Resource):
         
         db.session.delete(qry)
         db.session.commit()
-        return {'message': 'Data_Deleted'}, 200, {'Content-Type': 'application/json'}
+        return {'status':'success', 'message': 'akun terhapus'}, 200, {'Content-Type': 'application/json'}
 
 api.add_resource(UserResource, '/user/profile')
 

@@ -30,7 +30,7 @@ class BandEvent(Resource):
         db.session.add(new_event)
         db.session.commit()
 
-        return {"message": "SUCCESS"}, 200, {'Content-Type': 'application/json'}
+        return {"status": "Sucess", 'message': "Event ditambahkan", 'event':marshal(new_event, Event.response_field)  }, 200, {'Content-Type': 'application/json'}
     
     # fungsi band menampilkan eventnya dan detail event
     @jwt_required
@@ -48,9 +48,9 @@ class BandEvent(Resource):
             if qry is not None:
                 return marshal(qry, Event.response_field), 200, {'Content-Type': 'application/jason'}
             else:
-                return {'status': 'NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
+                return {'status': 'Not_found', 'message': 'event tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
         
-        return rows, 200, {'Content-Type': 'application/jason'}
+        return {'status':'sucess', 'events': rows}, 200, {'Content-Type': 'application/jason'}
     
     #fungsi band mengedit eventnya
     @jwt_required
@@ -60,7 +60,7 @@ class BandEvent(Resource):
         qryEvent = Event.query.filter_by(band_id=band['band_id']).filter_by(event_id=eventID).first()
 
         if qryEvent is None:
-            return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
+            return {'status': 'Not_found', 'message': 'Event tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
 
         else:
             event = marshal(qryEvent, Event.response_field)
@@ -83,7 +83,7 @@ class BandEvent(Resource):
             qryEvent.event_photo = args['event_photo']
 
             db.session.commit()
-            return marshal(qryEvent, Event.response_field), 200, {'Content-Type': 'application/json'}
+            return {'status':'Success', 'message':'Berhasil update', 'updated':marshal(qryEvent, Event.response_field)}, 200, {'Content-Type': 'application/json'}
 
     @jwt_required
     def delete(self, eventID):
@@ -94,9 +94,9 @@ class BandEvent(Resource):
         if qryEvent is not None:
             db.session.delete(qryEvent)
             db.session.commit()
-            return {'status': 'Data_Deleted'}, 200, {'Content-Type': 'application/json'}
+            return {'status': 'Success', 'message': 'Event Terhapus'}, 200, {'Content-Type': 'application/json'}
         else:
-            return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
+            return {'status': 'Not_found', 'message': 'Event tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
 
 api.add_resource(BandEvent, '/band/event', '/band/event/<int:eventID>')
 
@@ -120,18 +120,18 @@ class PublicEvent(Resource):
                     if qry.first() is None:
                         qry = Event.query.filter(Event.location.like("%"+args['search']+"%"))
                         if qry.first() is None:
-                            return {'status': 'Not_found','message':'event not found'},404, { 'Content-Type': 'application/json' }
+                            return {'status': 'Not_found','message':'event tidak ditemukan'},404, { 'Content-Type': 'application/json' }
             
-            rows = [{'halaman': args['p']}]
+            rows = []
             for row in qry.limit(args['rp']).offset(offset).all():
                 rows.append(marshal(row, Event.public_response_field))
-            return rows, 200, {'Content-Type': 'application/json'}
+            return {'Status': 'Success', 'halaman': args['p'], 'events':rows}, 200, {'Content-Type': 'application/json'}
 
         else:
             qry = Event.query.get(eventID)
             if qry is not None:
-                return marshal(qry, Event.public_response_field), 200, {'Content-Type': 'application/json'}
+                return {'Status': 'Success', 'event':marshal(qry, Event.public_response_field)}, 200, {'Content-Type': 'application/json'}
             else:
-                return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
+                return {'status': 'Not_found', 'message': 'event tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
 
 api.add_resource(PublicEvent, '/public/event', '/public/event/<int:eventID>')
