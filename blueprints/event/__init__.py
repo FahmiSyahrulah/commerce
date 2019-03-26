@@ -28,7 +28,9 @@ class Event(db.Model):
     }
 
     public_response_field = {
+        'event_id': fields.Integer,
         'bandName': fields.String,
+        'band_id': fields.Integer,
         'event_name': fields.String,
         'price': fields.Integer,
         'location': fields.String,

@@ -28,16 +28,15 @@ class UserTransaction(Resource):
             total = temp['price']*args['quantity']
             qryMerch.quantity = qryMerch.quantity-args['quantity']
             if qryMerch.quantity >= 0:
-                new_trans = Transactionproduct(None, args['merch_id'], user['user_id'], temp['merch_name'], user['username'], total, args['quantity'])
+                new_trans = Transactionproduct(None, args['merch_id'], user['user_id'], temp['merch_name'], user['username'], total, args['quantity'] , temp['band_id'], temp['bandName'])
                 db.session.add(new_trans)
                 db.session.commit()
-
-                return {"message": "SUCCESS"}, 200, {'Content-Type': 'application/json'}
+                return {"status":"success" ,"message": "pembelian berhasil", "transaksi": marshal(new_trans, Transactionproduct.public_response_field)}, 200, {'Content-Type': 'application/json'}
             else:
-                return {"message": "Produk tidak mencukupi"}, 200, {'Content-Type': 'application/json'}
+                return {"status":"failed" ,"message": "Produk tidak mencukupi"}, 200, {'Content-Type': 'application/json'}
         else :
-            return {'status': 'Not_found'}, 404, {'Content-Type': 'application/json'}
-    
+            return {'status': 'failed', "message": "Produk tidak ditemukan"}, 404, {'Content-Type': 'application/json'}
+            
     @jwt_required
     def get(self):
         user = get_jwt_claims()

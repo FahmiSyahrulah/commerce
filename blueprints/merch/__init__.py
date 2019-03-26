@@ -28,6 +28,8 @@ class Merch(db.Model):
     }
 
     public_response_field = {
+        'merch_id': fields.Integer,
+        'band_id': fields.Integer,
         'bandName': fields.String,
         'merch_name': fields.String,
         'price': fields.Integer,

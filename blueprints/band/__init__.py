@@ -30,6 +30,7 @@ class Bands(db.Model):
     }
 
     band_profile_response = {
+        'band_id': fields.Integer,
         'bandName': fields.String,
         'bandDesc': fields.String,
         'bandMail': fields.String,

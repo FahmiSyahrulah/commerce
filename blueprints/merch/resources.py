@@ -115,13 +115,15 @@ class PublicMerch(Resource):
 
             qry = Merch.query
             if args['search'] is not None:
-                qry = qry.filter(Merch.bandName.like("%"+args['search']+"%"))
+                qry = qry.filter(Merch.band_id.like(args['search']))
                 if qry.first() is None:
-                    qry = Merch.query.filter(Merch.merch_name.like("%"+args['search']+"%"))
+                    qry = qry.filter(Merch.bandName.like("%"+args['search']+"%"))
                     if qry.first() is None:
-                        qry = Merch.query.filter(Merch.kategori.like("%"+args['search']+"%"))
+                        qry = Merch.query.filter(Merch.merch_name.like("%"+args['search']+"%"))
                         if qry.first() is None:
-                            return {'status': 'Not_found','message':'merchandise not found'},404, { 'Content-Type': 'application/json' }
+                            qry = Merch.query.filter(Merch.kategori.like("%"+args['search']+"%"))
+                            if qry.first() is None:
+                                return {'status': 'Not_found','message':'merchandise not found'},404, { 'Content-Type': 'application/json' }
             
             rows = []
             for row in qry.limit(args['rp']).offset(offset).all():
