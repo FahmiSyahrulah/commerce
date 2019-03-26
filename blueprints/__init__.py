@@ -37,7 +37,7 @@ manager.add_command('db', MigrateCommand)
 api = Api(app, catch_all_404s=True)
 
 
-# middleware
+# upperware
 @app.after_request
 def after_request(response):
     if request.method=='GET':
