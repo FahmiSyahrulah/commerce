@@ -8,10 +8,10 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
-# from flask_cors import CORS
+
 
 app = Flask(__name__)
-# CORS(app)
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://fahmi:syahrulah@172.31.19.225:3306/ecommerce'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:alphatech@localhost/ecommerce'
@@ -62,3 +62,5 @@ app.register_blueprint(bp_event)
 app.register_blueprint(bp_transProd)
 app.register_blueprint(bp_transEvent)
 db.create_all()
+
+#ini komen

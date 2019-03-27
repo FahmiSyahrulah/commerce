@@ -5,6 +5,7 @@ ssh-add -k ~/.ssh/id_rsa &&
 cd /home/ubuntu/commerce &&
 git pull
 
+#edit
 source ~/.profile
 echo "$DOCKERHUB_PASS" | sudo docker login --username $DOCKERHUB_USER --password-stdin
 sudo docker stop commerce
