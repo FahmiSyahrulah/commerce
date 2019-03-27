@@ -11,7 +11,6 @@ from datetime import timedelta
 from flask_cors import CORS
 
 app = Flask(__name__)
-# CORS(app, resources={r"/login/user": {"origins": "*"}})
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://fahmi:syahrulah@172.31.19.225:3306/ecommerce'
