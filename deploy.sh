@@ -10,4 +10,4 @@ echo "$DOCKERHUB_PASS" | sudo docker login --username $DOCKERHUB_USER --password
 sudo docker stop commerce
 sudo docker rm commerce
 sudo docker rmi fsyahrulah/commerce
-sudo docker run -d --name commerce -p 5000:5000 fsyahrulah/commerce:latest
+sudo docker run -d --name commerce -p 5000:5000 fsyahrulah/commerce:development
